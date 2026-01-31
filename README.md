@@ -1,5 +1,8 @@
 # BioGuard
 
+> **Watch the Project Walkthrough:** [Explaination/Demo Video](https://drive.google.com/file/d/1IL02xIDRGFjU8m--8sLeyf30uiXnpY_7/view?usp=sharing)
+
+
 BioGuard is a premium next-generation health vault designed to secure, analyze, and manage your medical history with precision. Built with Next.js 14 and powered by Google's Gemini AI, it transforms static medical documents into actionable health insights.
 
 ## 🌟 Key Features
