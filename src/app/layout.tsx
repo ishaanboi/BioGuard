@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'SmartCare | Secure Health Vault',
+    title: 'BioGuard | Secure Health Vault',
     description: 'Your medical data, secure and accessible.',
 };
 

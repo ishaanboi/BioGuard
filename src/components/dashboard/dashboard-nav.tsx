@@ -53,7 +53,7 @@ const DashboardNav = () => {
     return (
         <div
             ref={navRef}
-            className="fixed top-4 left-4 h-[calc(100vh-2rem)] w-[60px] bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
+            className="fixed top-4 left-4 h-[calc(100vh-2rem)] w-[60px] bg-[#131E3A] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
             style={{ willChange: 'width' }}
         >
             {/* Header / Toggle */}
@@ -95,6 +95,7 @@ const DashboardNav = () => {
                         <p className="text-blue-200/50 text-sm mt-1">Schedule visit with doctor</p>
                     </div>
                 </Link>
+                {/* Health News Card */}
                 {/* Health News Card */}
                 <Link href="/dashboard/news" className="group">
                     <div className="bg-[#1e293b] hover:bg-[#334155] p-5 rounded-xl border border-white/5 hover:border-green-500/30 transition-all cursor-pointer">

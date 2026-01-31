@@ -1,6 +1,6 @@
-# SmartCare
+# BioGuard
 
-SmartCare is a premium, secure personal health vault built with Next.js 14, Firebase, and Framer Motion.
+BioGuard is a premium, secure personal health vault built with Next.js 14, Firebase, and Framer Motion. Powered by Gemini AI for intelligent document analysis.
 
 ## 🚀 Getting Started
 

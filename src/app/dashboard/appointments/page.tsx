@@ -106,20 +106,22 @@ export default function AppointmentsPage() {
     return (
         <div className="space-y-6 h-full flex flex-col">
             {/* Header Section */}
-            <div>
-                <h1 className="text-3xl font-headline font-bold text-white mb-2">Book an Appointment</h1>
-                <p className="text-blue-200/60">Find the best specialists near you.</p>
-            </div>
+            <div className="flex flex-col items-center text-center space-y-4">
+                <div>
+                    <h1 className="text-3xl font-headline font-bold text-white mb-2">Book an Appointment</h1>
+                    <p className="text-blue-200/60">Find the best specialists near you.</p>
+                </div>
 
-            {/* Search Bar */}
-            <div className="relative max-w-xl">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-200/50 w-5 h-5" />
-                <Input
-                    placeholder="Search doctors, specialties, or clinics..."
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-blue-200/30 focus:border-blue-500/50 focus:bg-white/10 rounded-xl h-12"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                {/* Search Bar */}
+                <div className="relative max-w-xl w-full">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-200/50 w-5 h-5" />
+                    <Input
+                        placeholder="Search doctors, specialties, or clinics..."
+                        className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-blue-200/30 focus:border-blue-500/50 focus:bg-white/10 rounded-xl h-12"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
             </div>
 
             {/* Main Content: Split View */}

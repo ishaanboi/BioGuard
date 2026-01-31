@@ -96,13 +96,13 @@ export default function DocumentsPage() {
 
     return (
         <div className="space-y-8 min-h-screen">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-headline font-bold text-white flex items-center gap-2">
+            <div className="flex flex-col items-center text-center space-y-10 mt-8 mb-12">
+                <div className="space-y-4">
+                    <h1 className="text-5xl font-headline font-black text-white flex items-center justify-center gap-3 drop-shadow-lg">
                         {currentFolder ? (
                             <>
                                 <ArrowLeft
-                                    className="w-6 h-6 mr-2 cursor-pointer hover:text-blue-400 transition-colors"
+                                    className="w-8 h-8 mr-2 cursor-pointer hover:text-blue-400 transition-colors"
                                     onClick={() => setCurrentFolder(null)}
                                 />
                                 <span className="text-blue-200/50 font-normal">{currentFolder.name}</span>
@@ -111,36 +111,39 @@ export default function DocumentsPage() {
                             "My Documents"
                         )}
                     </h1>
-                    <p className="text-blue-200/60 mt-1">
-                        {currentFolder ? "Manage files in this folder." : "Manage your medical records."}
+                    <p className="text-xl text-blue-200/70 font-medium max-w-lg mx-auto leading-relaxed">
+                        {currentFolder ? "Manage files in this folder." : "Manage your medical records securely and efficiently."}
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="relative w-full max-w-2xl mx-auto group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-blue-200/40 group-focus-within:text-blue-400 transition-colors" />
+                    <Input
+                        placeholder="Search documents or folders..."
+                        className="pl-14 h-16 text-lg bg-[#0f172a]/50 border-white/10 text-white placeholder:text-blue-200/30 w-full focus:border-blue-500/50 focus:bg-[#0f172a] focus:ring-4 focus:ring-blue-500/10 transition-all font-medium rounded-2xl shadow-xl"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+
+                <div className="flex items-center gap-4">
                     {!currentFolder && (
                         <Button
-                            className="bg-white/5 border border-white/10 hover:bg-white/10"
+                            className="h-14 px-8 text-base font-bold bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 transition-all rounded-xl"
                             onClick={() => setIsCreateFolderOpen(true)}
                         >
-                            <FolderPlus className="w-4 h-4 mr-2" />
+                            <FolderPlus className="w-5 h-5 mr-2.5" />
                             New Folder
                         </Button>
                     )}
-                    <Button onClick={() => setIsUploadOpen(true)} className="bg-blue-600 hover:bg-blue-500">
-                        <Plus className="w-4 h-4 mr-2" />
+                    <Button
+                        onClick={() => setIsUploadOpen(true)}
+                        className="h-14 px-8 text-base font-bold bg-blue-600 hover:bg-blue-500 hover:scale-105 transition-all shadow-lg shadow-blue-600/20 rounded-xl"
+                    >
+                        <Plus className="w-5 h-5 mr-2.5" />
                         {currentFolder ? "Upload Here" : "New Document"}
                     </Button>
                 </div>
-            </div>
-
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-200/40" />
-                <Input
-                    placeholder="Search documents or folders..."
-                    className="pl-10 bg-[#0f172a]/50 border-white/10 text-white placeholder:text-blue-200/30 w-full md:max-w-md focus:border-blue-500/50 transition-all font-mono text-sm"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
             </div>
 
             {loading ? (

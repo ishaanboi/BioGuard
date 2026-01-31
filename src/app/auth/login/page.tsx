@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '@/firebase/config';
 import { Loader2, Github, Mail } from 'lucide-react';
 import { SplitAuthLayout } from '@/components/auth/split-auth-layout';
@@ -14,6 +14,19 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
+
+    const handleGoogleLogin = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+            router.push('/dashboard');
+        } catch (err: any) {
+            setError(err.message || 'Failed to login with Google');
+            setLoading(false);
+        }
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,15 +55,16 @@ export default function LoginPage() {
                 </div>
 
                 <div className="space-y-6">
-                    {/* Social Buttons Placeholder */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <button type="button" className="w-full h-12 flex items-center justify-center bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-xl transition-all">
-                            <Github className="mr-2 h-5 w-5" />
-                            Github
-                        </button>
-                        <button type="button" className="w-full h-12 flex items-center justify-center bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-xl transition-all">
+                    {/* Social Buttons */}
+                    <div className="flex justify-center">
+                        <button
+                            type="button"
+                            onClick={handleGoogleLogin}
+                            disabled={loading}
+                            className="w-full h-12 flex items-center justify-center bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-xl transition-all"
+                        >
                             <Mail className="mr-2 h-5 w-5" />
-                            Google
+                            Continue with Google
                         </button>
                     </div>
 

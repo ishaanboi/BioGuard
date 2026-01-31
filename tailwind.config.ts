@@ -21,6 +21,8 @@ export default {
                 code: ['var(--font-geist-mono)', 'monospace'],
             },
             colors: {
+                trombone: '#D2B55B',
+                yale: '#131E3A',
                 background: 'hsl(var(--background))',
                 foreground: 'hsl(var(--foreground))',
                 card: {

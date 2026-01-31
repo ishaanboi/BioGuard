@@ -5,15 +5,18 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --primary: #1d4ed8;
+  --background: #131E3A;
+  /* Navy Blue */
+  --foreground: #ffffff;
+  --primary: #3b82f6;
+  /* Lighter Blue for buttons to pop against Navy */
   --primary-foreground: #ffffff;
-  --secondary: #eff6ff;
-  --secondary-foreground: #1e40af;
-  --muted: #1e293b;
+  --secondary: #1e40af;
+  --secondary-foreground: #ffffff;
+  --muted: #0a2e52;
+  /* Darker Yale */
   --muted-foreground: #94a3b8;
-  --accent: #3b82f6;
+  --accent: #2563eb;
   --accent-foreground: #ffffff;
 }
 

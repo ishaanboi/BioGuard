@@ -108,14 +108,14 @@ export default function NewsPage() {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col items-center text-center space-y-6">
                 <div>
                     <h1 className="text-4xl font-headline font-black text-white mb-2">Medical News</h1>
                     <p className="text-blue-200/60 font-medium">Curated health updates tailored for you.</p>
                 </div>
 
-                <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
-                    <div className="relative w-full md:w-80">
+                <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-md mx-auto">
+                    <div className="relative w-full">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-200/40 w-4 h-4" />
                         <Input
                             placeholder="Search topics (e.g. 'Vaccine')"

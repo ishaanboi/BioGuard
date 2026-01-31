@@ -25,6 +25,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { analyzeMedicalDocument } from "@/app/actions/analyze-document";
 
 interface UploadModalProps {
     isOpen: boolean;
@@ -108,11 +109,29 @@ export function UploadModal({ isOpen, onClose, onUploadComplete, currentFolderId
 
     const saveDocumentMetadata = async (url: string) => {
         try {
-            // Mock AI Summary based on category
-            let mockSummary = "No anomalies detected.";
-            if (category === "Lab Report") mockSummary = "Blood sugar levels slightly elevated (110 mg/dL). Vitamin D deficiency detected.";
-            if (category === "Prescription") mockSummary = "Amoxicillin 500mg - Take twice daily for 7 days.";
-            if (category === "Imaging") mockSummary = "MRI Scan confirms minor tissue inflammation in the left knee.";
+            // Real AI Analysis
+            let aiData = {
+                summary: "AI Analysis pending...",
+                category: category || "Other",
+                anomalies: []
+            };
+
+            try {
+                if (file) {
+                    const result = await analyzeMedicalDocument(url, file.type);
+                    aiData = {
+                        summary: result.summary,
+                        category: result.category || category,
+                        anomalies: result.anomalies || []
+                    };
+                    // Auto-update category if user left it generic, or trust AI more?
+                    // Let's stick to user choice if set, or suggest? 
+                    // For now, we'll keep user choice as primary but save AI summary.
+                }
+            } catch (aiError) {
+                console.error("AI Analysis Failed, falling back to basic save", aiError);
+                toast.error("AI Analysis failed. Saving without insights.");
+            }
 
             await addDoc(collection(db, "documents"), {
                 userId: user?.uid,
@@ -123,7 +142,8 @@ export function UploadModal({ isOpen, onClose, onUploadComplete, currentFolderId
                 size: file?.size,
                 createdAt: serverTimestamp(),
                 recordDate: date ? Timestamp.fromDate(new Date(date)) : serverTimestamp(),
-                summary: mockSummary,
+                summary: aiData.summary,
+                anomalies: aiData.anomalies,
                 status: 'processed',
                 folderId: currentFolderId || null
             });
