@@ -42,3 +42,6 @@ Storage rules are configured in `storage.rules`. Use the Firebase CLI to deploy 
 firebase init storage
 firebase deploy --only storage
 ```
+=======
+"A secure, AI-powered personal health vault built with Next.js 14, Firebase, and Gemini. Features a premium glassmorphism UI and intelligent document analysis."
+>>>>>>> ad69da159ad2da73d4fd1fb92e14ed021bdf5930
