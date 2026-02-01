@@ -153,7 +153,7 @@ export async function getDailyAnalysisUsage(idToken: string) {
         throw new Error("Failed to fetch usage stats.");
     }
 }
-}
+
 
 export async function analyzeText(text: string) {
     if (!process.env.GEMINI_API_KEY) throw new Error("Gemini API Key is missing.");
