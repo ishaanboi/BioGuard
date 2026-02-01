@@ -2,14 +2,14 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function sendChatMessage(history: { role: 'user' | 'model', parts: string }[], message: string) {
-    if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
         throw new Error("Gemini API Key is missing.");
     }
 
-    const modelsToTry = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
+    const modelsToTry = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.0-flash"];
     let lastError: any;
 
     for (const modelName of modelsToTry) {

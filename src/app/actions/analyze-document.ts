@@ -2,9 +2,9 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-const modelsToTry = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
+const modelsToTry = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.0-flash"];
 
 // Helper to try models in order
 async function tryGenerate(base64Data: string, mimeType: string) {
@@ -19,15 +19,50 @@ async function tryGenerate(base64Data: string, mimeType: string) {
             lastError = error;
         }
     }
-    throw new Error(`All analysis models failed: ${lastError?.message || "Unknown error"}`);
+    // If all fail, throw the last error
+    throw new Error(`All analysis models failed. Last error: ${lastError?.message || "Unknown error"}`);
 }
 
 
 // Original function (URL-based)
-export async function analyzeMedicalDocument(fileUrl: string, mimeType: string) {
-    if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) throw new Error("Gemini API Key is missing.");
+export async function analyzeMedicalDocument(fileUrl: string, mimeType: string, idToken: string) {
+    if (!process.env.GEMINI_API_KEY) throw new Error("Gemini API Key is missing.");
 
     try {
+        // 1. Verify User & Rate Limit
+        const { admin } = await import('@/lib/firebase-admin');
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const email = decodedToken.email;
+        const uid = decodedToken.uid;
+
+        const isAdmin = email === 'i.ishaanpant21@gmail.com';
+
+        if (!isAdmin) {
+            // Check rate limit
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const db = admin.firestore();
+            const q = db.collection('analysis_requests')
+                .where('userId', '==', uid)
+                .where('timestamp', '>=', today);
+
+            const snapshot = await q.count().get();
+            const usageCount = snapshot.data().count;
+
+            if (usageCount >= 5) {
+                throw new Error("Daily analysis limit reached (5/day). Upgrade for more.");
+            }
+
+            // Log usage
+            await db.collection('analysis_requests').add({
+                userId: uid,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                fileUrl: fileUrl, // minimal-logging
+                metadata: { mimeType }
+            });
+        }
+
         console.log(`Fetching file URL: ${fileUrl}`);
         const fileRes = await fetch(fileUrl);
         if (!fileRes.ok) throw new Error("Failed to fetch image for analysis");
@@ -45,7 +80,7 @@ export async function analyzeMedicalDocument(fileUrl: string, mimeType: string) 
 
 // New function for direct Base64 (from Client)
 export async function analyzeBase64(base64Data: string, mimeType: string) {
-    if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) throw new Error("Gemini API Key is missing.");
+    if (!process.env.GEMINI_API_KEY) throw new Error("Gemini API Key is missing.");
 
     try {
         return await tryGenerate(base64Data, mimeType);
@@ -86,4 +121,35 @@ async function generateAnalysis(model: any, base64Data: string, mimeType: string
 
     const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
     return JSON.parse(cleanText);
+}
+
+export async function getDailyAnalysisUsage(idToken: string) {
+    try {
+        const { admin } = await import('@/lib/firebase-admin');
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const email = decodedToken.email;
+        const uid = decodedToken.uid;
+
+        const isAdmin = email === 'i.ishaanpant21@gmail.com';
+
+        if (isAdmin) {
+            return { usage: 0, limit: -1, isAdmin: true }; // -1 indicates unlimited
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const db = admin.firestore();
+        const q = db.collection('analysis_requests')
+            .where('userId', '==', uid)
+            .where('timestamp', '>=', today);
+
+        const snapshot = await q.count().get();
+        const usageCount = snapshot.data().count;
+
+        return { usage: usageCount, limit: 5, isAdmin: false };
+    } catch (error: any) {
+        console.error("Error fetching usage:", error);
+        throw new Error("Failed to fetch usage stats.");
+    }
 }

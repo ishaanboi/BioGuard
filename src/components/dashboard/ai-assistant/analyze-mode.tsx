@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Upload, FileText, Loader2, AlertCircle, FileSearch, Pill, Stethoscope, FileDigit, BadgeCheck, CheckCircle2, Search, ArrowRight, Calendar, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { analyzeMedicalDocument } from '@/app/actions/analyze-document';
+import { getDailyAnalysisUsage, analyzeMedicalDocument } from '@/app/actions/analyze-document';
 import { cn } from '@/lib/utils';
 import { storage, db } from "@/firebase/config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -19,12 +19,32 @@ export function AnalyzeMode() {
     const [existingDocs, setExistingDocs] = useState<any[]>([]);
     const [isLoadingDocs, setIsLoadingDocs] = useState(false);
 
+    // Usage Stats
+    const [usageStats, setUsageStats] = useState<{ usage: number, limit: number, isAdmin: boolean } | null>(null);
+
     // Upload & Analysis State
     const [file, setFile] = useState<File | null>(null);
     const [result, setResult] = useState<any>(null);
     const [progress, setProgress] = useState(0);
     const [status, setStatus] = useState(''); // Uploading... Analyzing... Saving...
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (user) {
+            fetchUsageStats();
+        }
+    }, [user]);
+
+    const fetchUsageStats = async () => {
+        if (!user) return;
+        try {
+            const idToken = await user.getIdToken();
+            const stats = await getDailyAnalysisUsage(idToken);
+            setUsageStats(stats);
+        } catch (error) {
+            console.error("Failed to fetch usage:", error);
+        }
+    };
 
     const categories = [
         { id: 'Lab Report', label: 'Lab Report', icon: FileDigit, color: 'text-blue-400', bg: 'bg-blue-500/20', border: 'hover:border-blue-500/50' },
@@ -112,16 +132,28 @@ export function AnalyzeMode() {
                     };
 
                     try {
-                        const analysisResult = await analyzeMedicalDocument(downloadURL, fileToProcess.type);
+                        const idToken = await user.getIdToken();
+                        const analysisResult = await analyzeMedicalDocument(downloadURL, fileToProcess.type, idToken);
                         console.log("Client: Received Analysis Result:", analysisResult); // DEBUG LOG
                         aiData = {
                             summary: analysisResult.summary || "No summary generated.",
                             category: analysisResult.category || category,
                             anomalies: analysisResult.anomalies || []
                         };
-                    } catch (aiError) {
+
+                        // Update usage stats
+                        fetchUsageStats();
+
+                    } catch (aiError: any) {
                         console.error("AI Error:", aiError);
-                        toast.warning("AI Analysis had a hiccup, saving file anyway.");
+                        if (aiError.message.includes("limit reached")) {
+                            toast.error(aiError.message);
+                            setStatus("Analysis limit reached.");
+                            // Stop processing here if rate limited
+                            return;
+                        } else {
+                            toast.warning("AI Analysis had a hiccup, saving file anyway.");
+                        }
                     }
 
                     // 4. Save Metadata to Firestore
@@ -185,7 +217,8 @@ export function AnalyzeMode() {
 
         try {
             // Re-run analysis
-            const analysisResult = await analyzeMedicalDocument(result.fileUrl, result.fileType);
+            const idToken = await user.getIdToken();
+            const analysisResult = await analyzeMedicalDocument(result.fileUrl, result.fileType, idToken);
 
             // Update Firestore
             if (currentDocId) {
@@ -208,9 +241,17 @@ export function AnalyzeMode() {
             setStep('result');
             toast.success("Document re-analyzed and updated!");
 
+            // Update usage stats
+            fetchUsageStats();
+
         } catch (error: any) {
             console.error("Re-analysis failed:", error);
-            toast.error("Failed to re-analyze: " + error.message);
+            if (error.message.includes("limit reached")) {
+                toast.error(error.message);
+                setStatus("Re-analysis limit reached.");
+            } else {
+                toast.error("Failed to re-analyze: " + error.message);
+            }
             setStep('result'); // Go back to result on failure
         }
     };
@@ -219,7 +260,29 @@ export function AnalyzeMode() {
 
     return (
         <div className="flex flex-col h-full p-4 space-y-4">
-            {/* ... (Categories and Upload steps same) ... */}
+            {/* Usage Counter */}
+            {usageStats && (
+                <div className="flex justify-end px-2">
+                    <div className={cn(
+                        "px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-2",
+                        usageStats.isAdmin ? "bg-amber-500/10 border-amber-500/20 text-amber-300"
+                            : usageStats.usage >= usageStats.limit ? "bg-red-500/10 border-red-500/20 text-red-300"
+                                : "bg-blue-500/10 border-blue-500/20 text-blue-300"
+                    )}>
+                        {usageStats.isAdmin ? (
+                            <>
+                                <Sparkles className="w-3 h-3" />
+                                <span>Unlimited Access</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>Daily Limit: {usageStats.usage} / {usageStats.limit}</span>
+                                {usageStats.usage >= usageStats.limit && <AlertCircle className="w-3 h-3" />}
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Step 1: Category Selection */}
             {step === 'category' && (

@@ -5,15 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2, Newspaper, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-interface Article {
-    title: string;
-    description: string;
-    url: string;
-    urlToImage: string;
-    source: { name: string };
-    publishedAt: string;
-}
+import { getHealthNews, Article } from "@/app/actions/news";
 
 // Reuse Mock Data for resiliency
 const MOCK_NEWS: Article[] = [
@@ -35,53 +27,15 @@ export default function NewsPage() {
     const [nextPage, setNextPage] = useState<string | null>(null);
     const [isSearching, setIsSearching] = useState(false);
 
-    const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
-
     const fetchNews = async (searchQuery = "", pageToken = "") => {
-        if (!apiKey) {
-            setArticles(MOCK_NEWS);
-            setLoading(false);
-            return;
-        }
-
         try {
             setLoading(true);
-            let url = "";
 
-            if (apiKey.startsWith('pub_')) {
-                // NewsData.io
-                const queryParam = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : "";
-                const pageParam = pageToken ? `&page=${pageToken}` : "";
-                url = `https://newsdata.io/api/1/news?apikey=${apiKey}&category=health&language=en${queryParam}${pageParam}`;
-            } else {
-                // NewsAPI.org
-                const queryParam = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : "";
-                const pageParam = pageToken ? `&page=${pageToken}` : ""; // NewsAPI uses distinct logic, simplified here for primary fallback
-                url = `https://newsapi.org/v2/top-headlines?category=health&language=en&apiKey=${apiKey}${queryParam}`;
-            }
+            const { articles: fetchedArticles, nextPage: newNextPage } = await getHealthNews(searchQuery, pageToken);
 
-            const res = await fetch(url);
-            const data = await res.json();
+            setArticles(prev => pageToken ? [...prev, ...fetchedArticles] : fetchedArticles);
+            setNextPage(newNextPage || null);
 
-            if (apiKey.startsWith('pub_')) {
-                if (data.status === "success" && data.results) {
-                    const mapped = data.results.map((item: any) => ({
-                        title: item.title,
-                        description: item.description,
-                        url: item.link,
-                        urlToImage: item.image_url,
-                        source: { name: item.source_id },
-                        publishedAt: item.pubDate
-                    }));
-
-                    setArticles(prev => pageToken ? [...prev, ...mapped] : mapped);
-                    setNextPage(data.nextPage || null);
-                }
-            } else {
-                if (data.status === "ok" && data.articles) {
-                    setArticles(data.articles);
-                }
-            }
         } catch (error) {
             console.error("News fetch error:", error);
         } finally {

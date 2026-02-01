@@ -4,50 +4,7 @@ import { useEffect, useState } from "react";
 import { Newspaper, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-
-interface Article {
-    title: string;
-    description: string;
-    url: string;
-    urlToImage: string;
-    source: { name: string };
-    publishedAt: string;
-}
-
-const MOCK_NEWS: Article[] = [
-    {
-        title: "WHO Declares New Global Health Strategy for 2026",
-        description: "The World Health Organization outlines a comprehensive plan to tackle emerging infectious diseases and improve global healthcare equity.",
-        url: "#",
-        urlToImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=2070",
-        source: { name: "Global Health" },
-        publishedAt: new Date().toISOString()
-    },
-    {
-        title: "Breakthrough in AI-Driven Cancer Detection",
-        description: "Researchers have developed a new AI model capable of detecting early-stage tumors with 99% accuracy, revolutionizing diagnostics.",
-        url: "#",
-        urlToImage: "https://images.unsplash.com/photo-1579684385136-137af18db8e9?auto=format&fit=crop&q=80&w=2070",
-        source: { name: "Tech Med Daily" },
-        publishedAt: new Date(Date.now() - 86400000).toISOString()
-    },
-    {
-        title: "The Benefits of Vitamin D: Recent Studies",
-        description: "A meta-analysis confirms the vital role of Vitamin D in immune system function and mental health stability.",
-        url: "#",
-        urlToImage: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=2030",
-        source: { name: "Wellness Weekly" },
-        publishedAt: new Date(Date.now() - 172800000).toISOString()
-    },
-    {
-        title: "New Vaccine Technology Shows Promise",
-        description: "mRNA technology continues to evolve, showing potential for personalized cancer vaccines.",
-        url: "#",
-        urlToImage: "https://images.unsplash.com/photo-1632053002928-19e4871d3744?auto=format&fit=crop&q=80&w=2070",
-        source: { name: "MedTech News" },
-        publishedAt: new Date(Date.now() - 250000000).toISOString()
-    }
-];
+import { getHealthNews, Article } from "@/app/actions/news";
 
 export function HealthNews() {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -57,50 +14,14 @@ export function HealthNews() {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
-                if (!apiKey) {
-                    setUseMock(true);
-                    setArticles(MOCK_NEWS);
-                    setLoading(false);
-                    return;
-                }
+                const { articles: fetchedArticles } = await getHealthNews();
+                setArticles(fetchedArticles);
 
-                if (apiKey.startsWith('pub_')) {
-                    // NewsData.io API Logic
-                    const res = await fetch(`https://newsdata.io/api/1/news?apikey=${apiKey}&category=health&language=en`);
-                    const data = await res.json();
-                    if (data.status === "success" && data.results) {
-                        setArticles(data.results.map((item: any) => ({
-                            title: item.title,
-                            description: item.description,
-                            url: item.link,
-                            urlToImage: item.image_url,
-                            source: { name: item.source_id },
-                            publishedAt: item.pubDate
-                        })));
-                        setLoading(false);
-                        return;
-                    }
-                }
-
-                // Fallback / NewsAPI.org Logic
-                if (!apiKey.startsWith('pub_')) {
-                    const res = await fetch(`https://newsapi.org/v2/top-headlines?category=health&language=en&apiKey=${apiKey}`);
-                    const data = await res.json();
-                    if (data.status === "ok" && data.articles.length > 0) {
-                        setArticles(data.articles);
-                        setLoading(false);
-                        return;
-                    }
-                }
-
-                // Fallback to mock if API fails or no data
-                setUseMock(true);
-                setArticles(MOCK_NEWS);
+                // Heuristic to check if it's mock data (mock data has specific titles or we just trust the result)
+                // If the action returns mock, it means key was missing or error occurred.
+                // We'll trust the result.
             } catch (error) {
                 console.error("Failed to fetch news:", error);
-                setUseMock(true);
-                setArticles(MOCK_NEWS);
             } finally {
                 setLoading(false);
             }
