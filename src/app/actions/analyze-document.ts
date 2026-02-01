@@ -153,3 +153,25 @@ export async function getDailyAnalysisUsage(idToken: string) {
         throw new Error("Failed to fetch usage stats.");
     }
 }
+}
+
+export async function analyzeText(text: string) {
+    if (!process.env.GEMINI_API_KEY) throw new Error("Gemini API Key is missing.");
+
+    const prompt = `Analyze this medical context and provide a brief, patient-friendly summary: ${text}`;
+
+    let lastError: any;
+    for (const modelName of modelsToTry) {
+        try {
+            console.log(`Analyzing text with model: ${modelName}`);
+            const model = genAI.getGenerativeModel({ model: modelName });
+            const result = await model.generateContent(prompt);
+            const response = result.response;
+            return response.text();
+        } catch (error: any) {
+            console.warn(`Model ${modelName} failed text analysis:`, error.message);
+            lastError = error;
+        }
+    }
+    throw new Error(`All analysis models failed. Last error: ${lastError?.message || "Unknown error"}`);
+}

@@ -13,7 +13,7 @@ import {
 import { db } from "@/firebase/config";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
-import { analyzeMedicalDocument } from "@/lib/gemini";
+import { analyzeText } from "@/app/actions/analyze-document";
 import { Logo } from "@/components/layout/logo";
 
 export function AiAssistant() {
@@ -55,7 +55,7 @@ export function AiAssistant() {
         setStep('analysis');
         setLoading(true);
         // Trigger AI Analysis
-        const result = await analyzeMedicalDocument(doc.summary || doc.name, 'text');
+        const result = await analyzeText(doc.summary || doc.name);
         setAnalysis(result);
         setLoading(false);
     };

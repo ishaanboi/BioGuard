@@ -118,7 +118,8 @@ export function UploadModal({ isOpen, onClose, onUploadComplete, currentFolderId
 
             try {
                 if (file) {
-                    const result = await analyzeMedicalDocument(url, file.type);
+                    const idToken = await user?.getIdToken() || "";
+                    const result = await analyzeMedicalDocument(url, file.type, idToken);
                     aiData = {
                         summary: result.summary,
                         category: result.category || category,
