@@ -34,16 +34,18 @@ export function HealthNews() {
     const carouselItems = [...articles, ...articles];
 
     return (
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-lg overflow-hidden">
-            <div className="flex items-center justify-between mb-6">
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl overflow-hidden shadow-2xl relative">
+            <div className="flex items-center justify-between mb-8 relative z-10">
                 <div>
-                    <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <Newspaper className="w-6 h-6 text-blue-400" />
+                    <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
+                        <div className="p-2 bg-blue-500/20 rounded-xl border border-blue-500/20">
+                            <Newspaper className="w-6 h-6 text-blue-400" />
+                        </div>
                         Health Insights
                     </h2>
-                    <p className="text-blue-200/50 text-sm mt-1">Live updates from the medical world.</p>
+                    <p className="text-blue-200/50 text-sm mt-2 ml-12">Live updates from the medical world.</p>
                 </div>
-                {useMock && <span className="text-xs text-white/20 uppercase tracking-widest font-mono border border-white/10 px-2 py-1 rounded">Simulated</span>}
+                {useMock && <span className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold border border-white/10 px-3 py-1.5 rounded-full bg-white/5">Simulated</span>}
             </div>
 
             {/* Marquee Container */}
@@ -56,33 +58,34 @@ export function HealthNews() {
                         ease: "linear",
                         duration: articles.length * 5 // Dynamic duration based on count
                     }}
-                    whileHover={{ animationPlayState: "paused" }} // Note: Framer motion doesn't support CSS pause like this easily, logic below
+                    whileHover={{ animationPlayState: "paused" }}
                 >
                     {carouselItems.map((article, i) => (
-                        <div key={i} className="w-[300px] md:w-[350px] flex-shrink-0 group flex flex-col justify-between bg-black/20 border border-white/5 rounded-xl overflow-hidden hover:bg-black/30 transition-colors h-full">
-                            <div className="relative h-40 w-full overflow-hidden">
+                        <div key={i} className="w-[300px] md:w-[350px] flex-shrink-0 group flex flex-col justify-between bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all hover:-translate-y-1 hover:shadow-xl h-full backdrop-blur-sm">
+                            <div className="relative h-44 w-full overflow-hidden">
                                 <img
                                     src={article.urlToImage || 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&q=80&w=2070'}
                                     alt={article.title}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                 />
-                                <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-xs text-white font-medium">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] text-white font-bold tracking-wider uppercase border border-white/10">
                                     {article.source.name}
                                 </div>
                             </div>
 
-                            <div className="p-4 flex flex-col flex-1">
-                                <h3 className="text-white font-semibold mb-2 line-clamp-2 leading-tight group-hover:text-blue-400 transition-colors">
+                            <div className="p-5 flex flex-col flex-1">
+                                <h3 className="text-white font-semibold mb-3 line-clamp-2 leading-snug tracking-tight group-hover:text-blue-300 transition-colors">
                                     {article.title}
                                 </h3>
 
-                                <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                                    <span className="text-xs text-white/30">
+                                <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/10">
+                                    <span className="text-[11px] font-medium tracking-wider text-white/40 uppercase">
                                         {new Date(article.publishedAt).toLocaleDateString()}
                                     </span>
-                                    <Button size="sm" variant="ghost" className="h-8 text-blue-400 hover:text-white" asChild>
-                                        <a href={article.url} target="_blank" rel="noreferrer">
-                                            Read <ExternalLink className="w-3 h-3 ml-1" />
+                                    <Button size="sm" variant="ghost" className="h-8 text-blue-400 hover:text-white hover:bg-white/10 rounded-lg px-3" asChild>
+                                        <a href={article.url} target="_blank" rel="noreferrer" className="text-xs font-semibold">
+                                            Read <ExternalLink className="w-3 h-3 ml-1.5" />
                                         </a>
                                     </Button>
                                 </div>
@@ -91,9 +94,9 @@ export function HealthNews() {
                     ))}
                 </motion.div>
 
-                {/* Gradient Masks for fade effect */}
-                <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#020617] to-transparent z-10 pointer-events-none" />
-                <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-[#020617] to-transparent z-10 pointer-events-none" />
+                {/* Gradient Masks for fade effect (matching dashboard background #080c17) */}
+                <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#080c17] via-[#080c17]/80 to-transparent z-10 pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#080c17] via-[#080c17]/80 to-transparent z-10 pointer-events-none" />
             </div>
         </div>
     );

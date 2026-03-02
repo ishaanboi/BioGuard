@@ -146,8 +146,23 @@ export default function DocumentsPage() {
                 </div>
             </div>
 
-            {loading ? (
-                <div className="text-center py-20 text-blue-200/40 animate-pulse">Loading...</div>
+            {!user ? (
+                <div className="text-center py-20 rounded-2xl border border-dashed border-white/10 bg-white/5 backdrop-blur-sm max-w-2xl mx-auto">
+                    <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-500/20">
+                        <FileIcon className="w-8 h-8 text-blue-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-3">
+                        Authentication Required
+                    </h3>
+                    <p className="text-blue-200/50 mb-8 max-w-md mx-auto leading-relaxed">
+                        Please sign in to securely view, manage, and upload your personal medical documents to the BioGuard vault.
+                    </p>
+                    <Button onClick={() => window.location.href = '/'} className="bg-blue-600 hover:bg-blue-500 h-12 px-8 font-bold shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+                        Return to Sign In
+                    </Button>
+                </div>
+            ) : loading ? (
+                <div className="text-center py-20 text-blue-200/40 animate-pulse font-medium tracking-wide">Securely loading your vault...</div>
             ) : (
                 <div className="space-y-8">
                     {/* Folders (Only visible at Root) */}

@@ -41,7 +41,16 @@ export function UserNav() {
     }
 
     if (!user) {
-        return null;
+        return (
+            <div className="flex items-center gap-3">
+                <Button variant="ghost" asChild className="hidden sm:inline-flex text-blue-200/70 hover:text-white hover:bg-white/5 h-9 font-medium tracking-wide">
+                    <Link href="/auth/login">Sign In</Link>
+                </Button>
+                <Button asChild className="bg-blue-600 hover:bg-blue-500 text-white h-9 px-5 font-bold shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:scale-105 active:scale-95">
+                    <Link href="/auth/register">Get Started</Link>
+                </Button>
+            </div>
+        );
     }
 
     return (

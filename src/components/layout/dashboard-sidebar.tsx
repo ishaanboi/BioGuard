@@ -51,7 +51,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-[#020617]/80 backdrop-blur-md z-[40] lg:hidden"
+                        className="fixed inset-0 bg-[#080c17]/80 backdrop-blur-md z-[40] lg:hidden"
                     />
 
                     {/* Menu Container */}
@@ -60,13 +60,13 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                         animate={{ x: 0 }}
                         exit={{ x: "-100%" }}
                         transition={{ duration: 0.5, ease: [0, 0.55, 0.45, 1] }}
-                        className="fixed inset-y-0 left-0 w-full max-w-xs bg-[#0f172a]/95 border-r border-white/10 z-[45] flex flex-col p-6 shadow-2xl overflow-hidden"
+                        className="fixed inset-y-0 left-0 w-full max-w-xs bg-[#080c17]/95 backdrop-blur-2xl border-r border-white/5 z-[45] flex flex-col p-6 shadow-[20px_0_40px_rgba(0,0,0,0.5)] overflow-hidden"
                     >
                         <div className="flex items-center justify-between mb-8 mt-2">
                             <Logo />
                             <button
                                 onClick={onClose}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/60 hover:text-white lg:hidden"
+                                className="p-2 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-colors text-white/60 hover:text-white lg:hidden"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -75,7 +75,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                         {/* Book Appointment Section - PROMINENT */}
                         <div className="mb-8">
                             <button
-                                className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 transition-all group"
+                                className="w-full bg-white text-black hover:bg-slate-200 font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2 transition-all group scale-100 active:scale-95"
                                 onClick={() => router.push('/dashboard/appointments')}
                             >
                                 <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -83,45 +83,41 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                             </button>
                         </div>
 
-                        <div className="flex items-center gap-2 px-2 mb-4 cursor-pointer hover:opacity-80" onClick={() => router.push('/dashboard/documents')}>
-                            <FileText className="w-4 h-4 text-blue-500" />
-                            <h2 className="text-xs font-bold uppercase tracking-widest text-blue-200/40">My Documents</h2>
+                        <div className="flex items-center gap-2 px-2 mb-4 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => router.push('/dashboard/documents')}>
+                            <FileText className="w-4 h-4 text-blue-400" />
+                            <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200/40">My Documents</h2>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto pr-2 space-y-2">
-                            {/* Placeholder Documents List */}
-
-
+                        <div className="flex-1 overflow-y-auto pr-2 space-y-3">
                             {recentDocs.map((doc: any) => (
                                 <button
                                     key={doc.id}
                                     onClick={() => window.open(doc.fileUrl, '_blank')}
-                                    className="w-full p-4 rounded-xl bg-white/5 border border-white/5 hover:border-blue-500/30 hover:bg-white/10 transition-all text-left flex items-start group"
+                                    className="w-full p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 hover:bg-white/10 transition-all text-left flex items-start group shadow-lg"
                                 >
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors truncate">{doc.name}</h3>
+                                        <h3 className="text-sm font-semibold tracking-tight text-white group-hover:text-blue-400 transition-colors truncate">{doc.name}</h3>
                                         <p className="text-xs text-blue-200/40 mt-1 truncate">{doc.category}</p>
                                     </div>
-                                    <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-blue-500 transition-colors mt-1 shrink-0 ml-2" />
+                                    <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-blue-400 transition-colors mt-1 shrink-0 ml-2" />
                                 </button>
                             ))}
 
                             <button
                                 onClick={() => {
-                                    console.log("Navigating to documents...");
                                     router.push('/dashboard/documents');
                                     onClose(); // Close sidebar on mobile
                                 }}
-                                className="relative z-50 w-full py-3 rounded-xl border border-dashed border-white/10 text-blue-200/40 hover:text-blue-400 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all text-sm font-bold flex items-center justify-center gap-2 mt-4 cursor-pointer"
+                                className="relative z-50 w-full py-4 rounded-xl border border-dashed border-white/10 text-white/30 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all text-sm font-semibold flex items-center justify-center gap-2 mt-6 cursor-pointer"
                             >
                                 <Plus className="w-4 h-4" />
                                 <span>Upload New Document</span>
                             </button>
                         </div>
 
-                        <div className="mt-auto pt-6 border-t border-white/10">
-                            <p className="text-xs text-center text-blue-200/20">
-                                BioGuard Secure System v1.0
+                        <div className="mt-auto pt-6 border-t border-white/5">
+                            <p className="text-[10px] uppercase tracking-widest text-center text-white/20 font-bold">
+                                BioGuard System v1.0
                             </p>
                         </div>
                     </motion.div>

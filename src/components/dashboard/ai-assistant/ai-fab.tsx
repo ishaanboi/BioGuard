@@ -4,10 +4,14 @@ import { useState } from 'react';
 import { Sparkles, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AiWindow } from './ai-window';
-import { cn } from '@/lib/utils'; // Ensure this exists
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 export function AiFab() {
     const [isOpen, setIsOpen] = useState(false);
+    const { user } = useAuth();
+
+    if (!user) return null;
 
     return (
         <>

@@ -53,7 +53,7 @@ const DashboardNav = () => {
     return (
         <div
             ref={navRef}
-            className="fixed top-4 left-4 h-[calc(100vh-2rem)] w-[60px] bg-[#131E3A] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
+            className="fixed top-4 left-4 h-[calc(100vh-2rem)] w-[60px] bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
             style={{ willChange: 'width' }}
         >
             {/* Header / Toggle */}
@@ -70,42 +70,41 @@ const DashboardNav = () => {
             <div className="nav-content flex-1 flex flex-col gap-4 p-4 opacity-0 min-w-[320px]">
                 {/* My Documents Card */}
                 <Link href="/dashboard/documents" className="group">
-                    <div className="bg-[#1e293b] hover:bg-[#334155] p-5 rounded-xl border border-white/5 hover:border-blue-500/30 transition-all cursor-pointer">
+                    <div className="bg-white/5 hover:bg-white/10 p-5 rounded-2xl border border-white/10 hover:border-blue-500/30 transition-all cursor-pointer shadow-lg backdrop-blur-md">
                         <div className="flex justify-between items-start mb-2">
-                            <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <div className="p-2 bg-blue-500/20 rounded-xl border border-blue-500/20">
                                 <FileText className="text-blue-400" size={20} />
                             </div>
                             <ArrowUpRight className="text-white/30 group-hover:text-white transition-colors" size={18} />
                         </div>
-                        <h3 className="text-white font-medium text-lg">My Documents</h3>
+                        <h3 className="text-white font-semibold text-lg tracking-tight">My Documents</h3>
                         <p className="text-blue-200/50 text-sm mt-1">Manage reports & x-rays</p>
                     </div>
                 </Link>
 
                 {/* Book Appointment Card */}
                 <Link href="/dashboard/appointments" className="group">
-                    <div className="bg-[#1e293b] hover:bg-[#334155] p-5 rounded-xl border border-white/5 hover:border-purple-500/30 transition-all cursor-pointer">
+                    <div className="bg-white/5 hover:bg-white/10 p-5 rounded-2xl border border-white/10 hover:border-purple-500/30 transition-all cursor-pointer shadow-lg backdrop-blur-md">
                         <div className="flex justify-between items-start mb-2">
-                            <div className="p-2 bg-purple-500/20 rounded-lg">
+                            <div className="p-2 bg-purple-500/20 rounded-xl border border-purple-500/20">
                                 <Calendar className="text-purple-400" size={20} />
                             </div>
                             <ArrowUpRight className="text-white/30 group-hover:text-white transition-colors" size={18} />
                         </div>
-                        <h3 className="text-white font-medium text-lg">Book Appointment</h3>
+                        <h3 className="text-white font-semibold text-lg tracking-tight">Book Appointment</h3>
                         <p className="text-blue-200/50 text-sm mt-1">Schedule visit with doctor</p>
                     </div>
                 </Link>
                 {/* Health News Card */}
-                {/* Health News Card */}
                 <Link href="/dashboard/news" className="group">
-                    <div className="bg-[#1e293b] hover:bg-[#334155] p-5 rounded-xl border border-white/5 hover:border-green-500/30 transition-all cursor-pointer">
+                    <div className="bg-white/5 hover:bg-white/10 p-5 rounded-2xl border border-white/10 hover:border-green-500/30 transition-all cursor-pointer shadow-lg backdrop-blur-md">
                         <div className="flex justify-between items-start mb-2">
-                            <div className="p-2 bg-green-500/20 rounded-lg">
+                            <div className="p-2 bg-green-500/20 rounded-xl border border-green-500/20">
                                 <Newspaper className="text-green-400" size={20} />
                             </div>
                             <ArrowUpRight className="text-white/30 group-hover:text-white transition-colors" size={18} />
                         </div>
-                        <h3 className="text-white font-medium text-lg">Health News</h3>
+                        <h3 className="text-white font-semibold text-lg tracking-tight">Health News</h3>
                         <p className="text-blue-200/50 text-sm mt-1">Latest medical updates</p>
                     </div>
                 </Link>
@@ -113,7 +112,7 @@ const DashboardNav = () => {
 
             {/* Footer or Logo (Optional) */}
             <div className="flex-shrink-0 p-4 border-t border-white/5 nav-content opacity-0">
-                <p className="text-xs text-center text-white/20">BioGuard System</p>
+                <p className="text-[10px] uppercase tracking-widest text-center text-white/30 font-bold">BioGuard System</p>
             </div>
         </div>
     );

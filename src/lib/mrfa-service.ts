@@ -38,7 +38,45 @@ export async function createMRFALink(folder: any, documents: any[]): Promise<str
             const blob = await response.blob();
 
             // Use original name or fallback
-            const fileName = doc.name || `file-${doc.id}`;
+            let fileName = doc.name || `file-${doc.id}`;
+
+            // Try to extract the extension from the fileUrl if the name doesn't have one
+            if (!fileName.includes('.')) {
+                let ext = '';
+
+                // 1. Try to get extension from the Content-Type header
+                const contentType = response.headers.get('Content-Type');
+                if (contentType) {
+                    const mimeMap: Record<string, string> = {
+                        'application/pdf': '.pdf',
+                        'image/jpeg': '.jpg',
+                        'image/png': '.png',
+                        'text/plain': '.txt',
+                        'application/msword': '.doc',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+                    };
+                    ext = mimeMap[contentType] || '';
+                }
+
+                // 2. If no valid mime-type mapping, fallback to parsing URL
+                if (!ext) {
+                    try {
+                        const urlPath = doc.fileUrl.split('?')[0];
+                        const decodedPath = decodeURIComponent(urlPath);
+                        const lastDotIndex = decodedPath.lastIndexOf('.');
+
+                        if (lastDotIndex !== -1 && lastDotIndex > decodedPath.lastIndexOf('/')) {
+                            ext = decodedPath.substring(lastDotIndex);
+                        }
+                    } catch (e) {
+                        // Ignore parse error
+                    }
+                }
+
+                // Append extension (defaulting to .pdf for medical records as a robust fallback)
+                fileName += (ext || '.pdf');
+            }
+
             zip.file(fileName, blob);
             console.log(`Added ${fileName} to zip.`);
         } catch (error) {
